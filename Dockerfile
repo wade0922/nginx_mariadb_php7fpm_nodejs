@@ -2,6 +2,7 @@
 #mariadb
 #nginx
 #php7.0 fpm
+#ssh server
 
 #docker build -t wade0922/nginx_mariadb_php7fpm_nodejs:nginx_mariadb_php7fpm_nodejs .
 
