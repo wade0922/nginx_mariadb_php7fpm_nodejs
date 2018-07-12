@@ -66,14 +66,17 @@ RUN \
 COPY php.ini /etc/php/7.0/fpm/
 COPY www.conf /etc/php/7.0/fpm/pool.d/
 
-#NodeJs
-RUN \ 
-  apt-get update && \
-  apt-get install nodejs -y && \
-  apt-get install npm -y
+RUN apt-get update
+RUN apt-get install npm -y 
+RUN npm cache clean -f
+RUN npm install -g n
+RUN n stable
 
 #Yarn
 RUN npm install -g yarn
+
+#Nodemon
+RUN npm install -g nodemon
 
 #ssh
 RUN apt-get install -y openssh-server
