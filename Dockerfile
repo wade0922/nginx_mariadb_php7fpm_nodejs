@@ -3,6 +3,8 @@
 #nginx
 #php7.0 fpm
 
+#docker build -t wade0922/nginx_mariadb_php7fpm_nodejs:nginx_mariadb_php7fpm_nodejs .
+
 FROM ubuntu:16.04
 
 RUN apt-get update
@@ -72,9 +74,24 @@ RUN \
 #Yarn
 RUN npm install -g yarn
 
+#ssh
+RUN apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo "root:docker!" | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+EXPOSE 22
+#CMD ["/usr/sbin/sshd", "-D"]
+
 RUN \ 
   apt-get clean && \
   apt-get autoclean && \
   apt-get autoremove
 
-CMD /etc/init.d/php7.0-fpm start && nginx -g "daemon off;"
+CMD /etc/init.d/php7.0-fpm start && /etc/init.d/ssh restart && nginx -g "daemon off;"
